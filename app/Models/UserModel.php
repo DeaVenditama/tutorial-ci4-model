@@ -24,8 +24,20 @@ class UserModel extends Model
 	protected $deletedField         = 'deleted_at';
 
 	// Validation
-	protected $validationRules      = [];
-	protected $validationMessages   = [];
+	protected $validationRules = [
+        'username' => 'required|valid_email|is_unique[user.username,id,{id}]|min_length[3]',
+        'address' => 'required|min_length[8]',
+        'fullname' => 'required|min_length[8]',
+        'is_active' => 'required|integer'
+    ];
+
+    protected $validationMessages = [
+        'username' => [
+            'is_unique' => 'Username sudah digunakan'
+        ],
+		
+    ];
+
 	protected $skipValidation       = false;
 	protected $cleanValidationRules = true;
 
@@ -39,6 +51,4 @@ class UserModel extends Model
 	protected $afterFind            = [];
 	protected $beforeDelete         = [];
 	protected $afterDelete          = [];
-
-	
 }

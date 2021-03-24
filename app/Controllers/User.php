@@ -79,34 +79,15 @@ class User extends BaseController
 		print_r($deletedUsers);
 	}
 
-	public function contoh_insert()
-	{
-		$userModel = new \App\Models\UserModel();
-
-		$data = [
-			'username' => 'nobita',
-			'address' => 'nobita@theempire.com',
-			'fullname' => 'Nobita Nobi'
-		];
-
-		$userModel->insert($data);
-		/**
-		 * INSERT INTO user (username, address, fullname) 
-		 * 	VALUES ('nobita', 'nobita@theempire.com','Nobita Nobi)
-		*/ 
-	}
-
 	public function contoh_update_1()
 	{
 		$userModel = new \App\Models\UserModel();
 
 		$data = [
-			'username' => 'suneo',
-			'address' => 'suneo@theempire.com',
-			'fullname' => 'Suneo Honekawa'
+			'username' => 'suneo new ',			
 		];
 
-		$userModel->update(1003, $data);
+		$userModel->update(1007, $data);
 		//$userModel->update($id, $data);
 
 		/**
@@ -123,14 +104,14 @@ class User extends BaseController
 		$userModel = new \App\Models\UserModel();
 
 		$data = [
-			'is_active' => 1
+			'is_active' => 0
 		];
 
 		$userModel->update([2, 3, 4], $data);
 
 		/**
 		 * UPDATE user
-		 * 	SET is_active=1
+		 * 	SET is_active=0
 		 * 	WHERE id IN (2,3,4)
 		 */
 	}
@@ -155,11 +136,11 @@ class User extends BaseController
 		$userModel = new \App\Models\UserModel();
 
 		// Defined as a model property
-		$primaryKey = 'id';
+		//$primaryKey = 'id';
 
 		// Does an insert()
 		$data = [
-			'username' => 'giant',
+			'username' => 'giant baru',
 			'address' => 'giant@theempire.com',
 			'fullname' => 'Takeshi Goda'
 		];
@@ -168,7 +149,7 @@ class User extends BaseController
 
 		// Performs an update, since the primary key, 'id', is found.
 		$data = [
-			'id' => 1,
+			'id' => 1007,
 			'username' => 'deavenditama',			
 		];
 
@@ -179,11 +160,11 @@ class User extends BaseController
 	{
 		$userModel = new \App\Models\UserModel();
 
-		$userModel->delete(12);
-		//DELETE FROM user WHERE id=12
+		$userModel->delete(1005);
+		//DELETE FROM user WHERE id=1007
 
-		$userModel->delete([13,14,15]);
-		//DELETE FROM user WHERE id IN(13,14,15)
+		//$userModel->delete([1006,1008]);
+		//DELETE FROM user WHERE id IN(1006,1008)
 	}
 
 	public function contoh_purge_delete()
@@ -193,6 +174,169 @@ class User extends BaseController
 		$userModel->purgeDeleted();
 		//DELETE FROM user WHERE deleted_at IS NOT NULL
 	}
+
+	public function contoh_validation_1()
+	{
+		$userModel = new \App\Models\UserModel();
+
+		$data = [
+			'username' => 'nobita@tss.com',
+			'address' => 'indonesia',
+			'fullname' => 'Nobita Nobi',
+			'is_active' => 1,
+		];
+
+		if($userModel->insert($data) === false)
+		{
+			print_r($userModel->errors());
+		}else{
+			echo "Sukses";
+		}
+	}
+
+	public function contoh_set_validation_rule()
+	{
+		$userModel = new \App\Models\UserModel();
+
+		$data = [
+			'username' => 'nobita@tss.com',
+			'address' => 'indonesia',
+			'fullname' => 'nobita nobi',
+			'is_active' => 1,
+		];
+
+		$fieldName = 'fullname';
+		$fieldRules = 'required|min_length[8]';
+
+		$userModel->setValidationRule($fieldName, $fieldRules);
+
+		if($userModel->insert($data) === false)
+		{
+			print_r($userModel->errors());
+		}else{
+			echo "Sukses";
+		}
+	}
+
+	public function contoh_set_validation_rules()
+	{
+		$userModel = new \App\Models\UserModel();
+
+		$data = [
+			'username' => 'nobita',
+			//'address' => 'indonesia',
+			'fullanme' => 'Nobita Nobi',
+			'is_active' => 1,
+		];
+
+		$validationRules = [
+			'username' => 'required|valid_email|min_length[3]|is_unique[user.username]',
+			'address' => [
+				'rules' => 'required|min_length[8]',
+				'errors' => [
+					'required' => 'Address Harus Diisi',
+				],
+			],
+		];
+
+		$userModel->setValidationRules($validationRules);
+
+		if($userModel->insert($data) === false)
+		{
+			print_r($userModel->errors());
+		}else{
+			echo "Sukses";
+		}
+	}
+
+	public function contoh_set_validation_message()
+	{
+		$userModel = new \App\Models\UserModel();
+
+		$data = [
+			'address' => 'indonesia',
+			'is_active' => 1,
+		];
+
+		$fieldName = 'username';
+		$fieldValidationMessage = [
+			'required' => 'Username Harus diisi'
+		];
+
+		$userModel->setValidationMessage($fieldName, $fieldValidationMessage);
+
+		if($userModel->insert($data) === false)
+		{
+			print_r($userModel->errors());
+		}else{
+			echo "Sukses";
+		}
+	}
+
+	public function contoh_set_validation_messages()
+	{
+		$userModel = new \App\Models\UserModel();
+
+		$data = [
+			'address' => 'indonesia',
+			'is_active' => 1,
+		];
+
+		$fieldValidationMessage = [
+			'username' => [
+				'required' => 'Username Harus Diisi'
+			],
+			'fullname' => [
+				'required' => 'Fullname Harus Diisi'
+			]
+		];
+
+		$userModel->setValidationMessages($fieldValidationMessage);
+
+		if($userModel->insert($data) === false)
+		{
+			print_r($userModel->errors());
+		}else{
+			echo "Sukses";
+		}
+	}
+
+	public function retrieving_validation_rules()
+	{
+		$userModel = new \App\Models\UserModel();
+		
+		$rules = $userModel->validationRules;
+
+		print_r($rules);
+		echo '<br><br>';
+
+		$rules = $userModel->getValidationRules(['except'=>['username']]);
+		print_r($rules);
+		echo '<br><br>';
+
+		$rules = $userModel->getValidationRules(['only'=>['username','fullname']]);
+		print_r($rules);
+	}
+
+	public function validation_placeholders()
+	{
+		$userModel = new \App\Models\UserModel();
+
+		$data = [
+			'id' => 1,
+			'username' => 'nobita@tss.com',
+			'address' => 'jakarta pusat',
+			'is_active' => 1,
+		];
+
+		if($userModel->save($data) === false)
+		{
+			print_r($userModel->errors());
+		}else{
+			echo "Sukses";
+		}
+	}
+	//'username' => 'required|valid_email|is_unique[user.username,id,{id}]|min_length[3]',
 }
 
 
